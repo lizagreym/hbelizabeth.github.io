@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>С днём рождения, Лиза</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wall: #FFF6D6; --wall-deep: #D7E8EF; --floor-a: #E3C989; --floor-b: #C7A968;
+    --surface: rgba(255,252,240,0.75); --surface-solid: #FFFCF0;
+    --text-primary: #591427; --text-muted: #9C7480;
+    --accent-pink: #7A2B3D; --accent-peach: #E8C888;
+    --accent-mint: #A9C4CE; --accent-lavender: #C1DBE8;
+    --accent-wine: #591427;
+    --plant-green: #7C9A5E;
+    --border-soft: rgba(89,20,39,0.18);
+    --font-display: 'Jost', sans-serif; --font-body: 'Jost', sans-serif; --font-serif: 'Cormorant Garamond', serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --wall:#EFE9DC; --text-primary:#35302A; } }
+  :root[data-theme="dark"] { --wall:#EFE9DC; --text-primary:#35302A; }
+
+  * { box-sizing: border-box; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body {
+    margin: 0; min-height: 100svh;
+    background: linear-gradient(160deg, #FFF6D6 0%, #FDF0D0 100%);
+    background-attachment: fixed; color: var(--text-primary); font-family: var(--font-body);
+    line-height: 1.55; overflow-x: hidden;
+  }
+  img { max-width: 100%; } a, button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--accent-lavender); outline-offset: 3px; }
+
+  .intro { text-align: center; padding: 72px 24px 32px; }
+  .intro h1 { font-family: var(--font-serif); font-style: italic; font-weight: 600; font-size: clamp(2.4rem, 6.4vw, 4rem); margin: 0 0 14px; color: var(--text-primary); letter-spacing: 0.01em; }
+  .intro p { max-width: 44ch; margin: 0 auto; color: var(--text-muted); font-size: clamp(1rem, 1.8vw, 1.15rem); }
+  .intro .tip { margin-top: 10px; font-size: 0.85rem; color: var(--accent-pink); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+
+  .scene-wrap { padding: 12px 24px 100px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .room-scroll { width: 100%; overflow-x: auto; padding: 8px; -webkit-overflow-scrolling: touch; }
+  .room {
+    position: relative; width: 100%; min-width: 620px; max-width: 1000px; aspect-ratio: 3 / 2;
+    margin: 0 auto; border-radius: 6px; overflow: hidden;
+    background: var(--wall);
+    box-shadow: 0 30px 60px -30px rgba(53,48,42,.4);
+    border: 2px solid var(--text-primary);
+    outline: 2px solid var(--accent-peach); outline-offset: 5px;
+  }
+
+  .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 38%; z-index: 0;
+    background-color: var(--floor-a);
+    background-image:
+      linear-gradient(rgba(53,48,42,.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(53,48,42,.08) 1px, transparent 1px),
+      linear-gradient(180deg, var(--floor-a), var(--floor-b));
+    background-size: 60px 60px, 60px 60px, 100% 100%;
+  }
+  .wainscot { position: absolute; left: 0; right: 0; top: 44%; height: 18%; z-index: 0; background: var(--wall-deep);
+    background-image: repeating-linear-gradient(90deg, rgba(53,48,42,.1) 0 2px, transparent 2px 58px); }
+  .crown { position: absolute; left: 0; right: 0; top: 0; height: 9px; background: linear-gradient(180deg, var(--accent-peach), #C7A968); box-shadow: 0 2px 4px rgba(53,48,42,.3); z-index: 0; }
+  .rail { position: absolute; left: 0; right: 0; height: 3px; background: var(--accent-peach); box-shadow: 0 1px 3px rgba(53,48,42,.35); z-index: 0; }
+  .rail.top { top: 44%; } .rail.bottom { top: 62%; }
+
+  /* ---- decor ---- */
+  .rug { position: absolute; left: 44%; top: 70%; transform: translate(-50%,-50%); width: 260px; height: 82px; border-radius: 50%;
+    background-color: var(--accent-lavender);
+    background-image: repeating-conic-gradient(var(--accent-pink) 0% 25%, transparent 0% 50%);
+    background-size: 34px 34px;
+    box-shadow: 0 0 0 6px var(--accent-peach) inset, 0 10px 24px -12px rgba(53,48,42,.4);
+    opacity: .95; z-index: 1; }
+  .rug-small { position: absolute; width: 130px; height: 46px; border-radius: 14px; background: var(--accent-mint);
+    box-shadow: 0 0 0 4px var(--accent-peach) inset, 0 8px 16px -8px rgba(53,48,42,.35); opacity: .9; z-index: 1; }
+
+  /* ---- french bulldog on the rug ---- */
+  .dog-prop { width: 92px; z-index: 2; border: none; background: none; padding: 0; cursor: pointer; transition: left 1s cubic-bezier(.3,.7,.4,1); }
+  .dog-prop svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 4px 5px rgba(53,48,42,.3)); }
+  .dog-prop.bop { animation: dog-bop .45s ease; }
+  @keyframes dog-bop {
+    0%   { transform: translate(-50%,-50%) scale(1,1); }
+    35%  { transform: translate(-50%,-50%) scale(1.08,0.92); }
+    100% { transform: translate(-50%,-50%) scale(1,1); }
+  }
+  .dog-prop.catching .paw-front { animation: paw-grab .55s ease; transform-box: fill-box; transform-origin: 50% 50%; }
+  @keyframes paw-grab {
+    0%   { transform: translate(0,0) rotate(0deg); }
+    30%  { transform: translate(-7px,-4px) rotate(-14deg); }
+    60%  { transform: translate(2px,2px) rotate(9deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+
+  .ball-prop { width: 22px; z-index: 3; border: none; background: none; padding: 0; cursor: grab; touch-action: none;
+    transition: left 1s cubic-bezier(.3,.7,.4,1), top 1s cubic-bezier(.3,.7,.4,1), transform .3s ease; }
+  .ball-prop.dragging { transition: transform .2s ease; cursor: grabbing; }
+  .ball-spin { display: block; }
+  .ball-spin.spin { animation: ball-roll .9s linear; }
+  @keyframes ball-roll { from { transform: rotate(0deg); } to { transform: rotate(650deg); } }
+  .ball-prop svg { display: block; width: 100%; filter: drop-shadow(0 3px 3px rgba(53,48,42,.3)); }
+
+  .clock-btn { width: 72px; height: 72px; border-radius: 50%; background: var(--surface-solid); box-shadow: 0 0 0 5px var(--accent-pink), 0 8px 16px -8px rgba(53,48,42,.4); z-index: 4; }
+  .clock-btn::before { content: ''; position: absolute; inset: -16px; border-radius: 50%; background: repeating-conic-gradient(var(--accent-peach) 0deg 9deg, transparent 9deg 27deg); opacity: .4; z-index: -1; }
+  .clock-hand { position: absolute; left: 50%; bottom: 50%; width: 3px; background: var(--text-primary); border-radius: 2px; transform-origin: bottom center; }
+  .clock-hand.hour { height: 16px; margin-left: -1.5px; }
+  .clock-hand.minute { height: 24px; width: 2px; margin-left: -1px; background: var(--accent-pink); }
+  .clock-toast { position: absolute; left: 11%; top: 2%; transform: translate(-10%,0) scale(.92); background: var(--surface-solid); color: var(--text-primary);
+    padding: 8px 14px; border-radius: 4px; font-family: var(--font-display); font-weight: 500; font-size: .8rem; white-space: nowrap;
+    box-shadow: 0 8px 16px -8px rgba(53,48,42,.35); opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease; z-index: 6; }
+  .clock-toast.show { opacity: 1; transform: translate(-10%,-10px) scale(1); }
+
+  /* ---- disco ball + rotating light beams ---- */
+  .disco-line { position: absolute; left: 50%; top: 0; width: 2px; height: 8%; background: var(--text-muted); transform: translateX(-50%); z-index: 4; }
+  .disco-ball { position: absolute; left: 50%; top: 8%; width: 58px; height: 58px; border-radius: 50%; transform: translate(-50%,0); z-index: 4;
+    background: conic-gradient(from 0deg, #F0E6D0, #D4C4A0, #F0E6D0, #D4C4A0, #F0E6D0, #D4C4A0);
+    box-shadow: inset -8px -8px 12px rgba(53,48,42,.3), 0 10px 16px -6px rgba(53,48,42,.4); animation: disco-spin 7s linear infinite; }
+  .disco-ball::before { content:''; position:absolute; top:10%; left:16%; width:34%; height:24%; border-radius:50%; background: rgba(255,255,255,.6); filter: blur(2px); }
+  @keyframes disco-spin { to { transform: translate(-50%,0) rotate(360deg); } }
+
+  .disco-rays { position: absolute; left: 50%; top: 9.5%; width: 0; height: 0; pointer-events: none; z-index: 2;
+    animation: rays-spin 14s linear infinite; }
+  .ray-beam { position: absolute; left: -3px; top: 0; width: 6px; height: 640px; transform-origin: top center; opacity: .3; }
+  @keyframes rays-spin { to { transform: rotate(360deg); } }
+
+  /* ---- window with cityscape ---- */
+  .window-frame { position: absolute; width: 160px; z-index: 3; }
+  .window-glass { position: relative; width: 100%; height: 104px; border-radius: 6px; overflow: hidden; box-shadow: inset 0 0 0 6px var(--surface-solid), 0 8px 16px -8px rgba(53,48,42,.35); }
+  .window-glass::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: var(--surface-solid); margin-left: -2px; z-index: 3; }
+  .window-glass::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 4px; background: var(--surface-solid); margin-top: -2px; z-index: 3; }
+  .sky { position: absolute; inset: 0; transition: background .6s ease; }
+  .sky-body { position: absolute; border-radius: 50%; }
+  .star { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #FFFDF6; opacity: .85; }
+  .skyline { position: absolute; left: 0; right: 0; bottom: 0; height: 62%; }
+  .skyline svg { width: 100%; height: 100%; display: block; }
+  .window-arrow { position: absolute; top: 50%; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-solid); border: none;
+    box-shadow: 0 3px 6px rgba(53,48,42,.3); cursor: pointer; font-size: 1rem; color: var(--text-primary); transform: translateY(-50%); }
+  .window-arrow.left { left: -30px; } .window-arrow.right { right: -30px; }
+  .window-label { margin-top: 8px; text-align: center; font-family: var(--font-display); font-weight: 500; font-size: .8rem; color: var(--text-primary);
+    background: var(--surface-solid); border-radius: 4px; padding: 4px 10px; box-shadow: 0 3px 6px rgba(53,48,42,.2); }
+  .season-decor { position: absolute; right: -16px; top: -16px; width: 38px; z-index: 4; filter: drop-shadow(0 3px 4px rgba(53,48,42,.3)); pointer-events: none; }
+  .season-decor svg { display: block; width: 100%; }
+
+  /* ---- growing plant ---- */
+  .plant-pot { position: absolute; width: 50px; }
+  .plant-pot svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  /* ---- weather: seasonal particles ---- */
+  .weather-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 7; }
+  .weather-particle { position: absolute; top: -8%; border-radius: 50%; animation-timing-function: linear; animation-iteration-count: infinite; }
+  .weather-particle.leaf { border-radius: 0 60% 0 60%; }
+  .weather-particle.petal { border-radius: 100% 0 100% 0; }
+  @keyframes weather-fall { 0% { top: -8%; opacity: 0; } 12% { opacity: .9; } 88% { opacity: .9; } 100% { top: 106%; opacity: 0; } }
+  @keyframes weather-rise { 0% { top: 106%; opacity: 0; } 12% { opacity: .8; } 88% { opacity: .8; } 100% { top: -8%; opacity: 0; } }
+  @keyframes weather-sway { 0% { margin-left: -6px; } 100% { margin-left: 6px; } }
+
+  /* ---- birthday countdown plaque ---- */
+  .bday-countdown { position: absolute; background: var(--surface-solid); border-radius: 4px; padding: 7px 12px; font-family: var(--font-display);
+    font-weight: 500; font-size: .7rem; color: var(--text-primary); box-shadow: 0 6px 12px -6px rgba(53,48,42,.3); text-align: center; line-height: 1.3; white-space: nowrap; z-index: 4; }
+
+  /* ---- radio ---- */
+  .radio-prop { width: 62px; height: 42px; z-index: 3; }
+  .wall-shelf { position: absolute; width: 150px; height: 8px; z-index: 2; }
+  .wall-shelf-plank { position: absolute; left: 0; right: 0; top: 0; height: 8px; border-radius: 5px; background: linear-gradient(160deg, #E8CFA0, #D1AC7C); box-shadow: 0 8px 14px -6px rgba(53,48,42,.4); }
+  .wall-shelf-bracket { position: absolute; width: 4px; height: 12px; background: #C2A176; bottom: -12px; }
+  .wall-shelf-bracket.l { left: 18%; } .wall-shelf-bracket.r { right: 18%; }
+  .radio-body { position: absolute; inset: 0; border-radius: 8px; background: linear-gradient(160deg, #C9A375, #96754D); box-shadow: 0 10px 16px -8px rgba(53,48,42,.5); }
+  .radio-dial { position: absolute; left: 8px; top: 10px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface-solid); box-shadow: inset 0 0 0 2px var(--accent-lavender); }
+  .radio-grill { position: absolute; right: 8px; top: 8px; width: 22px; height: 22px; border-radius: 4px;
+    background-image: radial-gradient(circle, var(--text-muted) 1.2px, transparent 1.4px); background-size: 6px 6px; opacity: .6; }
+  .radio-antenna { position: absolute; right: 14px; top: -14px; width: 2px; height: 16px; background: var(--text-muted); transform: rotate(18deg); transform-origin: bottom center; }
+  .radio-prop.playing .radio-dial { box-shadow: inset 0 0 0 2px var(--accent-pink); animation: orb-pulse 1.6s ease-in-out infinite; }
+
+  /* ---- armchair with plush dino ---- */
+  .armchair { position: absolute; width: 130px; height: 112px; z-index: 3; }
+  .chair-back { position: absolute; left: 8%; right: 8%; top: 0; height: 58%; border-radius: 10px 10px 4px 4px; background: linear-gradient(160deg, var(--accent-pink), #4A1220); box-shadow: 0 10px 20px -10px rgba(53,48,42,.35); }
+  .chair-seat { position: absolute; left: 0; right: 0; bottom: 20%; height: 34%; border-radius: 8px; background: linear-gradient(160deg, var(--accent-pink), #5C1F2E); box-shadow: 0 8px 16px -8px rgba(53,48,42,.3); }
+  .chair-arm { position: absolute; bottom: 16%; width: 18px; height: 48%; border-radius: 6px; background: var(--accent-pink); }
+  .chair-arm.l { left: -3%; } .chair-arm.r { right: -3%; }
+  .chair-leg { position: absolute; bottom: -12px; width: 8px; height: 30px; background: var(--accent-peach); border-radius: 2px; }
+  .chair-leg.l { left: 16%; } .chair-leg.r { right: 16%; }
+  .chair-dino { position: absolute; left: 52%; top: -6%; transform: translateX(-50%); width: 92px; filter: drop-shadow(0 6px 6px rgba(53,48,42,.3)); border: none; background: none; padding: 0; cursor: pointer; }
+  .chair-dino svg { display: block; width: 100%; height: auto; }
+  .chair-dino .tongue { opacity: 0; transform-origin: 70px 63px; transition: opacity .15s ease; }
+  .chair-dino.tongue-out .tongue { opacity: 1; animation: tongue-wag .7s cubic-bezier(.34,1.56,.64,1) 1; }
+  @keyframes tongue-wag {
+    0% { transform: scaleY(0) rotate(0deg); }
+    35% { transform: scaleY(1.12) rotate(-10deg); }
+    55% { transform: scaleY(1) rotate(9deg); }
+    75% { transform: scaleY(1) rotate(-5deg); }
+    100% { transform: scaleY(1) rotate(0deg); }
+  }
+  .chair-dino .mouth-open { opacity: 0; transition: opacity .12s ease; }
+  .chair-dino.tongue-out .mouth-open { opacity: 1; }
+  .chair-dino.tongue-out .mouth-closed { opacity: 0; }
+  .chair-dino.bop { animation: dino-bop .4s ease; }
+  @keyframes dino-bop { 0% { transform: translateX(-50%) scale(1); } 40% { transform: translateX(-50%) scale(1.08,0.92); } 100% { transform: translateX(-50%) scale(1); } }
+  .chair-pillow { position: absolute; left: 16%; top: 34%; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-pink);
+    box-shadow: 15px 3px 0 -2px var(--accent-pink), -12px 5px 0 -3px var(--accent-pink), 3px -9px 0 -4px var(--accent-pink), 7px 9px 0 -3px var(--accent-pink); }
+
+  /* ---- shared prop button reset ---- */
+  .prop { position: absolute; border: none; padding: 0; cursor: pointer; background: none; }
+  .prop:hover { filter: brightness(1.06); }
+
+  /* ---- contact shadow, reused under standalone props ---- */
+  .floor-shadow { position: absolute; left: 50%; bottom: -8px; transform: translateX(-50%); width: 68%; height: 10px; border-radius: 50%;
+    background: rgba(53,48,42,.26); filter: blur(4px); z-index: -1; pointer-events: none; }
+  .floor-shadow.big { width: 84%; height: 14px; bottom: -16px; }
+
+  /* ---- congratulations: stacked, draggable boxes ---- */
+  .gift-prop { width: 70px; height: 80px; touch-action: none; z-index: 5; }
+  .gift-prop .box-lid { position: absolute; left: -6%; right: -6%; top: 0; height: 26%; border-radius: 6px; background: var(--box-color); filter: brightness(0.86); box-shadow: 0 3px 6px rgba(53,48,42,.25); }
+  .gift-prop .box-body { position: absolute; left: 0; right: 0; top: 22%; bottom: 0; border-radius: 0 0 10px 10px; background: var(--box-color); box-shadow: 0 10px 18px -10px rgba(53,48,42,.5); }
+  .gift-prop .ribbon-v { position: absolute; top: 0; bottom: 0; left: 50%; width: 8px; margin-left: -4px; background: var(--surface-solid); opacity: .92; z-index: 2; }
+  .gift-prop .ribbon-h { position: absolute; left: 0; right: 0; top: 22%; height: 7px; background: var(--surface-solid); opacity: .92; z-index: 2; }
+  .gift-prop .bow { position: absolute; left: 50%; top: -8px; transform: translateX(-50%); width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent-peach); box-shadow: 0 2px 4px rgba(53,48,42,.3), inset 0 0 0 2px var(--surface-solid); z-index: 3; }
+  .gift-prop.opened { opacity: .55; }
+  .gift-prop.dragging { filter: brightness(1.1); cursor: grabbing; }
+  .gift-prop.pop { animation: prop-pop .4s ease; }
+  @keyframes prop-pop {
+    0% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); }
+    50% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1.18); }
+    100% { transform: translate(-50%,-50%) rotate(var(--rot,0deg)) scale(1); }
+  }
+
+  /* ---- table + cake ---- */
+  .table-assembly { position: absolute; width: 140px; height: 155px; }
+  .stand-foot { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 30px; height: 8px; border-radius: 50%;
+    background: linear-gradient(160deg, #6B4A32, #4A3220); box-shadow: 0 4px 8px -3px rgba(53,48,42,.4); z-index: 1; }
+  .stand-pedestal { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); width: 34px; height: 58px;
+    background: linear-gradient(160deg, #7A5638, #4A3220);
+    clip-path: polygon(34% 0%, 66% 0%, 100% 46%, 100% 54%, 66% 100%, 34% 100%, 0% 54%, 0% 46%); z-index: 1; }
+  .stand-plate { position: absolute; left: 50%; bottom: 60px; transform: translateX(-50%); width: 112px; height: 13px; border-radius: 50%; z-index: 2;
+    background: var(--surface-solid); box-shadow: 0 10px 16px -8px rgba(53,48,42,.4), inset 0 -3px 4px rgba(53,48,42,.08); }
+  .stand-plate::after { content: ''; position: absolute; left: 4%; right: 4%; top: 1px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.7); }
+
+  .cake { position: absolute; left: 50%; bottom: 68px; transform: translateX(-50%); width: 88px; z-index: 3; }
+  .candles { position: absolute; top: -20px; left: 0; right: 0; height: 20px; display: flex; justify-content: center; align-items: flex-end; gap: 5px; }
+  .candle { position: relative; width: 4px; height: 100%; background: none; border: none; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; cursor: pointer; }
+  .candle .stick { width: 4px; height: 15px; border-radius: 1.5px; box-shadow: 0 1px 2px rgba(53,48,42,.3); }
+  .candle .flame { width: 6px; height: 9px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); transform-origin: bottom center; margin-bottom: -1px;
+    background: radial-gradient(circle at 30% 30%, #FFF3C4, #FFB347 55%, #E8752C 100%); animation: flicker 1.3s ease-in-out infinite; }
+  @keyframes flicker { 0%,100% { transform: rotate(-45deg) scale(1); } 50% { transform: rotate(-38deg) scale(0.9,1.08); } }
+  .candle.out .flame { animation: none; opacity: 0; transform: rotate(-45deg) scale(0.2); transition: opacity .4s ease, transform .4s ease; }
+  .candle .smoke { position: absolute; top: -1px; width: 4px; height: 4px; border-radius: 50%; background: rgba(140,130,150,.4); opacity: 0; }
+  .candle.out .smoke { animation: smoke-puff 1s ease-out forwards; }
+  @keyframes smoke-puff { 0% { opacity:.6; transform:translateY(0) scale(1);} 100% { opacity:0; transform:translateY(-14px) scale(2.2);} }
+
+  .tier { border-radius: 16px; position: relative; }
+  .tier.main { height: 46px; border-radius: 22px 22px 8px 8px; background: linear-gradient(160deg, #F9D5E4, #F0A8C4); box-shadow: 0 6px 10px -5px rgba(53,48,42,.3); overflow: visible; }
+  .sprinkle { position: absolute; border-radius: 50%; }
+  .frosting { position: absolute; top: -6px; left: 0; right: 0; height: 11px; background-image: radial-gradient(circle at 5.5px 5.5px, #FFFDF8 4.5px, transparent 5px); background-size: 11px 11px; background-repeat: repeat-x; }
+  .frosting-bottom { position: absolute; bottom: -4px; left: 0; right: 0; height: 7px; background-image: radial-gradient(circle at 3.5px 3.5px, #F5BBD3 3px, transparent 3.5px); background-size: 7px 7px; background-repeat: repeat-x; }
+  .plate { width: 112%; margin-left: -6%; height: 7px; border-radius: 50%; background: var(--surface-solid); box-shadow: 0 5px 10px -4px rgba(53,48,42,.4); margin-top: 2px; }
+  .cake-shadow { position: absolute; left: 50%; bottom: -3px; transform: translateX(-50%); width: 78%; height: 6px; border-radius: 50%; background: rgba(53,48,42,.28); filter: blur(2px); z-index: -1; }
+
+  /* ---- camera ---- */
+  .camera { width: 96px; height: 74px; z-index: 4; }
+  .cam-body { position: absolute; left: 4px; right: 4px; bottom: 10px; top: 20px; background: linear-gradient(160deg, var(--accent-pink), #4A1220); border-radius: 10px; box-shadow: 0 10px 18px -10px rgba(53,48,42,.5); }
+  .cam-body::after { content:''; position:absolute; left:0; right:0; bottom:0; height: 40%; background: var(--text-primary); opacity:.8; border-radius: 0 0 10px 10px; }
+  .cam-lens { position: absolute; left: 50%; top: 44%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #eef2ea, var(--accent-lavender) 60%, #2E4550 100%); box-shadow: 0 0 0 4px var(--surface-solid); z-index: 1; }
+  .cam-flash-cube { position: absolute; left: 50%; top: -6px; width: 26px; height: 16px; margin-left: -13px; border-radius: 4px; background: var(--accent-peach); box-shadow: 0 4px 8px -3px rgba(53,48,42,.4); }
+  .cam-strap { position: absolute; left: -4px; top: 6px; width: 10px; height: 3px; background: var(--text-muted); border-radius: 2px; }
+
+  /* ---- prediction cabinet ---- */
+  .fortune-cabinet { position: absolute; width: 100px; height: 116px; border-radius: 8px 8px 4px 4px; background: linear-gradient(160deg, var(--accent-lavender), #3E5A66); box-shadow: 0 14px 22px -12px rgba(53,48,42,.5); z-index: 4; }
+  .fortune-window { position: absolute; left: 50%; top: 20%; width: 54px; height: 54px; margin-left: -27px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0%, var(--accent-peach) 45%, var(--accent-pink) 100%); box-shadow: inset 0 0 12px rgba(53,48,42,.3); }
+  .fortune-glow { position: absolute; inset: -10px; border-radius: 50%; background: radial-gradient(circle, rgba(201,161,91,.5), transparent 70%); opacity: .6; animation: orb-pulse 3s ease-in-out infinite; pointer-events: none; }
+  @keyframes orb-pulse { 0%,100% { transform: scale(1); opacity:.5; } 50% { transform: scale(1.18); opacity:.9; } }
+  .fortune-cabinet.active .fortune-window { animation: orb-shake .5s ease; }
+  @keyframes orb-shake { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+  .fortune-label { position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%); font-family: var(--font-display); font-weight: 500; font-size: .62rem; color: var(--surface-solid); letter-spacing: .01em; }
+  .fortune-knob { position: absolute; bottom: 26%; width: 9px; height: 9px; border-radius: 50%; background: var(--accent-peach); }
+  .fortune-knob.l { left: 12%; } .fortune-knob.r { right: 12%; }
+
+  .blow-all { border: 1px solid var(--border-soft); border-radius: 4px; padding: 12px 24px; background: var(--surface); color: var(--text-primary); font-weight: 500; letter-spacing: .02em; cursor: pointer; }
+  .blow-all:hover { transform: translateY(-2px); }
+
+  .flash-overlay { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 400; }
+  .flash-overlay.flash { animation: flash-anim .35s ease; }
+  @keyframes flash-anim { 0% { opacity: 0; } 30% { opacity: .9; } 100% { opacity: 0; } }
+  #confetti-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 150; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(53,48,42,.45); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity .3s ease; z-index: 300; }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-card { position: relative; background: var(--surface-solid); border-radius: 6px; padding: 32px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 30px 60px -20px rgba(53,48,42,.4); transform: scale(.9); transition: transform .3s ease, max-width .2s ease; border: 6px solid var(--wall); max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .modal-card.wide { max-width: 660px; }
+  .modal-overlay.show .modal-card { transform: scale(1); }
+  .modal-close { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; line-height: 1; padding: 6px; }
+  .modal-card h3 { font-family: var(--font-serif); font-style: italic; font-weight: 600; margin: 0 0 12px; font-size: 1.5rem; color: var(--text-primary); }
+  .modal-card p { margin: 0 0 8px; font-size: 1rem; }
+  .modal-card .signature { font-family: var(--font-display); font-weight: 500; color: var(--accent-pink); margin-top: 10px; }
+  .polaroid { width: 100%; aspect-ratio: 4/5; border-radius: 8px; margin: 0 0 16px; display: flex; align-items: center; justify-content: center; font-size: 2.6rem; background: linear-gradient(135deg, var(--accent-peach), var(--accent-pink) 50%, var(--accent-mint)); }
+  .modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .primary, .secondary { display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 4px; padding: 12px 22px; font-size: .92rem; font-weight: 500; letter-spacing: .02em; cursor: pointer; transition: transform .2s ease; text-decoration: none; }
+  .primary { background: var(--accent-wine); color: var(--surface-solid); }
+  .secondary { background: transparent; color: var(--text-primary); border: 1px solid var(--border-soft); }
+  .primary:hover, .secondary:hover { transform: translateY(-2px); }
+  #cam-video { width: 100%; border-radius: 10px; margin-bottom: 16px; transform: scaleX(-1); background: #000; }
+
+  footer { text-align: center; padding: 8px 24px 56px; color: var(--text-muted); font-size: .9rem; }
+
+  .swipe-hint { display: none; text-align: center; font-size: .85rem; color: var(--text-muted); margin-bottom: -6px; opacity: 1; transition: opacity .4s ease; }
+  .swipe-hint.hide { opacity: 0; }
+
+  @media (max-width: 700px) {
+    .intro { padding: 44px 20px 24px; }
+    .scene-wrap { padding: 8px 12px 80px; }
+    .swipe-hint { display: block; }
+    .modal-card { padding: 22px; }
+    .modal-card.wide iframe { height: min(70vh, 480px) !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="intro">
+    <h1>С днём рождения, Лиза</h1>
+    <p>Пока все листают ленту, ты уже придумываешь, что будет дальше. Мы собрали для тебя целую комнату — с подарками, тортом и парой сюрпризов.</p>
+    <p class="tip">нажимай и двигай всё, что видишь</p>
+  </div>
+
+  <div class="scene-wrap">
+    <p class="swipe-hint" id="swipe-hint">← смахни, чтобы осмотреть комнату →</p>
+    <div class="room-scroll" id="room-scroll">
+      <div class="room" id="room">
+        <div class="crown" aria-hidden="true"></div>
+        <div class="floor" aria-hidden="true"></div>
+        <div class="wainscot" aria-hidden="true"></div>
+        <div class="rail top" aria-hidden="true"></div>
+        <div class="rail bottom" aria-hidden="true"></div>
+        <div class="rug" aria-hidden="true"></div>
+        <button class="prop dog-prop" id="dog-btn" style="left:44%; top:69%; transform:translate(-50%,-50%);" aria-label="Кинуть мяч бульдогу">
+          <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="108" cy="54" rx="5" ry="3.6" fill="#D3A05F"/>
+            <ellipse cx="95" cy="73" rx="11" ry="6.5" fill="#C4924F" opacity=".8"/>
+            <ellipse cx="68" cy="58" rx="40" ry="21" fill="#D3A05F"/>
+            <ellipse cx="48" cy="63" rx="14" ry="16" fill="#EDD9B0" opacity=".85"/>
+            <ellipse cx="36" cy="80" rx="15" ry="7.5" fill="#C4924F"/>
+            <ellipse cx="22" cy="78" rx="15" ry="7.5" fill="#D3A05F" class="paw-front"/>
+            <path d="M9,76 q-3,3 -1,5.5" stroke="#2A211C" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <path d="M16,79 q-2,3 0,5.5" stroke="#2A211C" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <path d="M24,80 q-1,3 1,5.5" stroke="#2A211C" stroke-width="1" fill="none" stroke-linecap="round"/>
+            <path d="M18,20 Q11,-6 35,9 Q29,22 22,29 Z" fill="#D3A05F"/>
+            <path d="M72,20 Q79,-6 55,9 Q61,22 68,29 Z" fill="#D3A05F"/>
+            <path d="M20,17 Q16,-1 31,9 Q26,18 21,23 Z" fill="#B8804A"/>
+            <path d="M70,17 Q74,-1 59,9 Q64,18 69,23 Z" fill="#B8804A"/>
+            <circle cx="45" cy="37" r="25" fill="#D3A05F"/>
+            <path d="M37,21 Q45,25 53,21" stroke="#B8804A" stroke-width="1.3" fill="none" opacity=".7" stroke-linecap="round"/>
+            <circle cx="33" cy="35" r="4.4" fill="#241C17"/>
+            <circle cx="31.6" cy="33.5" r="1.3" fill="#fff" opacity=".85"/>
+            <circle cx="57" cy="35" r="4.4" fill="#241C17"/>
+            <circle cx="55.6" cy="33.5" r="1.3" fill="#fff" opacity=".85"/>
+            <ellipse cx="45" cy="49" rx="18" ry="14" fill="#241C17"/>
+            <ellipse cx="45" cy="43" rx="6.5" ry="4.4" fill="#171310"/>
+            <path d="M39,50 Q45,55 51,50" stroke="#171310" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="prop ball-prop" id="ball-btn" style="left:44%; top:69%; transform:translate(-50%,-50%) scale(0);" aria-label="Перетащи мяч к бульдогу">
+          <span class="ball-spin" id="ball-spin">
+            <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="18" fill="#C7D93A"/>
+              <path d="M4,12 Q20,22 4,32" stroke="#FFFDF6" stroke-width="2.6" fill="none"/>
+              <path d="M36,12 Q20,22 36,32" stroke="#FFFDF6" stroke-width="2.6" fill="none"/>
+            </svg>
+          </span>
+        </button>
+        <div class="rug-small" aria-hidden="true" style="left:88%; top:79%; transform:translate(-50%,-50%);"></div>
+        <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
+
+        <button class="prop clock-btn" id="clock-btn" style="left:11%; top:14%; transform:translate(-50%,-50%);" aria-label="Который час">
+          <div class="clock-hand hour" id="clock-hour"></div>
+          <div class="clock-hand minute" id="clock-minute"></div>
+        </button>
+        <div class="clock-toast" id="clock-toast">Лучшее время для кофе?</div>
+        <div class="bday-countdown" id="bday-countdown" style="left:11%; top:32%; transform:translate(-50%,-50%);"></div>
+
+        <div class="disco-line" aria-hidden="true"></div>
+        <div class="disco-rays" id="disco-rays" aria-hidden="true"></div>
+        <div class="disco-ball" aria-hidden="true"></div>
+
+        <div class="window-frame" style="left:35%; top:20%; transform:translate(-50%,-50%);">
+          <div class="season-decor" id="season-decor" aria-hidden="true"></div>
+          <button class="window-arrow left" id="win-prev" aria-label="Предыдущий город">‹</button>
+          <div class="window-glass">
+            <div class="sky" id="window-sky"></div>
+            <div class="skyline" id="window-skyline"></div>
+          </div>
+          <button class="window-arrow right" id="win-next" aria-label="Следующий город">›</button>
+          <div class="window-label" id="window-label"></div>
+        </div>
+
+        <div class="wall-shelf" style="left:70%; top:15%; transform:translate(-50%,-50%);">
+          <div class="wall-shelf-plank"></div>
+          <div class="wall-shelf-bracket l"></div>
+          <div class="wall-shelf-bracket r"></div>
+          <button class="prop radio-prop" id="radio-btn" style="left:6px; bottom:8px;" aria-label="Послушать музыку">
+            <span class="radio-body"></span>
+            <span class="radio-dial"></span>
+            <span class="radio-grill"></span>
+            <span class="radio-antenna"></span>
+          </button>
+          <div class="plant-pot" id="plant-pot" style="right:6px; bottom:8px;"></div>
+        </div>
+
+        <div class="armchair" style="left:89%; top:66%; transform:translate(-50%,-50%);">
+          <div class="floor-shadow big"></div>
+          <div class="chair-back"></div>
+          <div class="chair-arm l"></div><div class="chair-arm r"></div>
+          <div class="chair-seat"></div>
+          <div class="chair-pillow"></div>
+          <button class="chair-dino" id="dino-btn" aria-label="Динозаврик показывает язык">
+            <svg viewBox="0 0 140 158" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="70" cy="150" rx="30" ry="5" fill="rgba(53,48,42,0.15)"/>
+
+              <!-- tail -->
+              <path d="M104 98 C126 94 136 74 126 56 C121 70 110 84 98 90 Z" fill="#1F8F86"/>
+
+              <!-- back arms -->
+              <path d="M22 78 C12 80 8 96 14 112 C18 122 26 122 28 112 C30 100 28 88 24 80 Z" fill="#2EC4B6"/>
+              <path d="M118 78 C128 80 132 96 126 112 C122 122 114 122 112 112 C110 100 112 88 116 80 Z" fill="#2EC4B6"/>
+              <!-- claws -->
+              <path d="M12 110 l-4 5 M17 114 l-2 6 M23 114 l1 6" stroke="#17665F" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M128 110 l4 5 M123 114 l2 6 M117 114 l-1 6" stroke="#17665F" stroke-width="2.4" stroke-linecap="round"/>
+
+              <!-- legs / feet -->
+              <ellipse cx="46" cy="146" rx="16" ry="9" fill="#1F8F86"/>
+              <ellipse cx="94" cy="146" rx="16" ry="9" fill="#1F8F86"/>
+              <path d="M34 148 l-4 6 M42 151 l-2 6 M50 151 l1 6 M58 148 l3 6" stroke="#134D47" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M106 148 l4 6 M98 151 l2 6 M90 151 l-1 6 M82 148 l-3 6" stroke="#134D47" stroke-width="2.4" stroke-linecap="round"/>
+
+              <!-- body with shaggy bottom edge -->
+              <path d="M70 46
+                C96 46 112 68 110 96
+                C124 100 118 116 106 112
+                C100 130 40 130 34 112
+                C22 116 16 100 30 96
+                C28 68 44 46 70 46 Z" fill="#2EC4B6"/>
+              <path d="M40 120 q4 8 0 14 M52 124 q3 8 -1 13 M66 126 q1 8 -2 12 M80 125 q0 8 3 12 M92 121 q-2 8 2 13"
+                stroke="#1F8F86" stroke-width="2" stroke-linecap="round" fill="none" opacity=".55"/>
+
+              <!-- belly + star -->
+              <ellipse cx="70" cy="98" rx="24" ry="28" fill="#8FE9DD"/>
+              <path d="M70 78 l4 15 15 4 -15 4 -4 15 -4 -15 -15 -4 15 -4 Z" fill="#FFFDF6"/>
+
+              <!-- back spikes -->
+              <path d="M44 50 L40 38 L50 46 Z" fill="#1F8F86"/>
+              <path d="M96 50 L100 38 L90 46 Z" fill="#1F8F86"/>
+              <path d="M64 40 L61 26 L71 26 L68 40 Z" fill="#1F8F86"/>
+
+              <!-- head -->
+              <circle cx="70" cy="40" r="27" fill="#2EC4B6"/>
+              <ellipse cx="70" cy="58" rx="17" ry="11" fill="#3ED9CA"/>
+              <circle cx="64" cy="56" r="1.6" fill="#1B3B38"/>
+              <circle cx="76" cy="56" r="1.6" fill="#1B3B38"/>
+              <path class="mouth-closed" d="M56 62 Q70 70 84 62" stroke="#1B3B38" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path class="mouth-open" d="M55 60 Q70 80 85 60 Q70 70 55 60 Z" fill="#1B3B38"/>
+              <path class="tongue" d="M62 66 Q70 84 78 66 Q70 76 62 66 Z" fill="#E8859F" stroke="#B4577A" stroke-width="1"/>
+              <path class="tongue" d="M67 68 Q70 78 73 68" stroke="#F5B3C6" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".8"/>
+              <path d="M60 63 l-2 7 4 -3 Z" fill="#FFFDF6" stroke="#1B3B38" stroke-width="1"/>
+              <path d="M80 63 l2 7 -4 -3 Z" fill="#FFFDF6" stroke="#1B3B38" stroke-width="1"/>
+
+              <!-- sunglasses -->
+              <rect x="45" y="34" width="20" height="13" rx="6" fill="#211C2C"/>
+              <rect x="75" y="34" width="20" height="13" rx="6" fill="#211C2C"/>
+              <rect x="65" y="38" width="10" height="4" fill="#211C2C"/>
+              <path d="M49 37 l4 7" stroke="#F2ECD8" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+              <path d="M79 37 l4 7" stroke="#F2ECD8" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+              <path d="M42 38 l-6 -3 M98 38 l6 -3" stroke="#211C2C" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="chair-leg l"></div><div class="chair-leg r"></div>
+        </div>
+
+        <div class="gift-pile" id="gift-pile"></div>
+
+        <div class="table-assembly" style="left:64%; bottom:8%; transform:translateX(-50%);">
+          <div class="stand-foot"></div>
+          <div class="stand-pedestal"></div>
+          <div class="stand-plate"></div>
+          <div class="cake" id="cake">
+            <div class="candles" id="candles"></div>
+            <div class="tier main" id="cake-tier"><div class="frosting"></div><div class="frosting-bottom"></div></div>
+            <div class="plate"></div>
+            <div class="cake-shadow"></div>
+          </div>
+        </div>
+
+        <button class="prop camera" id="camera-btn" style="left:90%; top:89%; transform:translate(-50%,-50%);" aria-label="Сфотографироваться">
+          <span class="floor-shadow"></span>          <span class="cam-strap"></span>
+          <span class="cam-flash-cube"></span>
+          <span class="cam-body"></span>
+          <span class="cam-lens"></span>
+        </button>
+
+        <button class="prop fortune-cabinet" id="orb-btn" style="left:92%; top:28%; transform:translate(-50%,-50%);" aria-label="Узнать предсказание">
+          <span class="floor-shadow"></span>          <span class="fortune-window"><span class="fortune-glow"></span></span>
+          <span class="fortune-knob l"></span><span class="fortune-knob r"></span>
+          <span class="fortune-label">Предсказание</span>
+        </button>
+      </div>
+    </div>
+    <button class="blow-all" id="blow-all-btn">задуть все свечи</button>
+  </div>
+
+  <footer>сделано с любовью</footer>
+
+  <div class="flash-overlay" id="flash-overlay"></div>
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-card" id="modal-card">
+      <button class="modal-close" id="modal-close" aria-label="Закрыть">×</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const room = document.getElementById('room');
+  const roomScroll = document.getElementById('room-scroll');
+  const swipeHint = document.getElementById('swipe-hint');
+  if (roomScroll && swipeHint) {
+    roomScroll.addEventListener('scroll', () => swipeHint.classList.add('hide'), { once: true });
+  }
+  const today = new Date();
+
+  // ---------- сезон: погода за окном и в комнате ----------
+  function getSeason(month) {
+    if (month === 11 || month === 0 || month === 1) return 'winter';
+    if (month >= 2 && month <= 4) return 'spring';
+    if (month >= 5 && month <= 7) return 'summer';
+    return 'autumn';
+  }
+  const seasonConfigs = {
+    winter: { count: 22, colors: ['#FFFFFF', '#FFF6D6'], shape: 'circle', size: [3, 5], behavior: 'fall', duration: [9, 16] },
+    spring: { count: 16, colors: ['#E3A8B8', '#FFFCF0', '#C1DBE8'], shape: 'petal', size: [5, 8], duration: [10, 18], behavior: 'fall' },
+    summer: { count: 14, colors: ['#E8C888', '#F5DFA8'], shape: 'circle', size: [2, 4], duration: [7, 13], behavior: 'rise' },
+    autumn: { count: 16, colors: ['#7A2B3D', '#C7A968', '#A9C4CE'], shape: 'leaf', size: [6, 9], duration: [9, 15], behavior: 'fall' }
+  };
+  const season = getSeason(today.getMonth());
+  if (!reduceMotion) {
+    const cfg = seasonConfigs[season];
+    const layer = document.getElementById('weather-layer');
+    for (let i = 0; i < cfg.count; i++) {
+      const p = document.createElement('div');
+      p.className = 'weather-particle ' + cfg.shape;
+      const size = cfg.size[0] + Math.random() * (cfg.size[1] - cfg.size[0]);
+      p.style.width = size + 'px'; p.style.height = size + 'px';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.background = cfg.colors[Math.floor(Math.random() * cfg.colors.length)];
+      if (cfg.shape === 'petal' || cfg.shape === 'leaf') p.style.transform = `rotate(${Math.random() * 360}deg)`;
+      const dur = cfg.duration[0] + Math.random() * (cfg.duration[1] - cfg.duration[0]);
+      const delay = -Math.random() * dur;
+      const swayDur = 2 + Math.random() * 2;
+      p.style.animation = `${cfg.behavior === 'rise' ? 'weather-rise' : 'weather-fall'} ${dur}s linear infinite ${delay}s, weather-sway ${swayDur}s ease-in-out infinite alternate`;
+      layer.appendChild(p);
+    }
+  }
+
+  // ---------- сезонное украшение у окна ----------
+  const seasonDecor = {
+    winter: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" fill="none" stroke="#5C7A4A" stroke-width="6" stroke-dasharray="4.5 3.5" stroke-linecap="round"/>
+      <circle cx="13" cy="8" r="2.1" fill="#8B2A3A"/><circle cx="20" cy="5.5" r="2.1" fill="#8B2A3A"/><circle cx="27" cy="8" r="2.1" fill="#8B2A3A"/>
+      <path d="M15,32 L20,27 L25,32 L20,37 Z" fill="var(--accent-pink)"/></svg>`,
+    spring: `<svg viewBox="0 0 40 40"><path d="M20,38 Q17,20 22,4" stroke="#6B8E4E" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="6" r="4.2" fill="#F6B8D2"/><circle cx="15" cy="12" r="3.6" fill="#FFFDF6"/>
+      <circle cx="27" cy="14" r="3.6" fill="#F6B8D2"/><circle cx="18" cy="20" r="3.2" fill="#FFFDF6"/></svg>`,
+    summer: `<svg viewBox="0 0 40 40"><g transform="translate(20,20)">
+      <path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-peach)"/><path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-lavender)" transform="rotate(90)"/>
+      <path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-peach)" transform="rotate(180)"/><path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-lavender)" transform="rotate(270)"/>
+      <circle cx="0" cy="0" r="3" fill="var(--accent-pink)"/></g></svg>`,
+    autumn: `<svg viewBox="0 0 40 40"><path d="M20,15 Q17,9 20,4" stroke="#6B8E4E" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="20" cy="25" rx="12" ry="9.5" fill="#C7702E"/>
+      <path d="M11,25 Q20,19 29,25" stroke="#A85A22" stroke-width="1" fill="none" opacity=".6"/>
+      <path d="M11,25 Q20,31 29,25" stroke="#A85A22" stroke-width="1" fill="none" opacity=".6"/></svg>`
+  };
+  document.getElementById('season-decor').innerHTML = seasonDecor[season];
+
+  // ---------- звук: генерируем на лету, без файлов ----------
+  let sfxCtx = null;
+  function getSfxCtx() {
+    if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (sfxCtx.state === 'suspended') sfxCtx.resume();
+    return sfxCtx;
+  }
+  function playBark() {
+    const ctx = getSfxCtx(); const t = ctx.currentTime;
+    for (let i = 0; i < 2; i++) {
+      const start = t + i * 0.14;
+      const osc = ctx.createOscillator(); osc.type = 'square';
+      const g = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
+      osc.frequency.setValueAtTime(340, start);
+      osc.frequency.exponentialRampToValueAtTime(150, start + 0.08);
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(0.1, start + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
+      osc.start(start); osc.stop(start + 0.13);
+    }
+  }
+  function playPuff() {
+    const ctx = getSfxCtx(); const t = ctx.currentTime;
+    const len = Math.floor(ctx.sampleRate * 0.22);
+    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+    const noise = ctx.createBufferSource(); noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1100; filter.Q.value = 0.6;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.16, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+    noise.connect(filter); filter.connect(g); g.connect(ctx.destination);
+    noise.start(t); noise.stop(t + 0.22);
+  }
+
+  // ---------- обратный отсчёт до дня рождения (12 сентября) ----------
+  function ruDays(n) {
+    const mod10 = n % 10, mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return 'день';
+    if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'дня';
+    return 'дней';
+  }
+  (function renderCountdown() {
+    const t0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    let target = new Date(t0.getFullYear(), 8, 12);
+    if (target < t0) target = new Date(t0.getFullYear() + 1, 8, 12);
+    const diff = Math.round((target - t0) / 86400000);
+    const el = document.getElementById('bday-countdown');
+    el.textContent = diff === 0 ? '🎂 сегодня ДР!' : `🎂 до ДР — ${diff} ${ruDays(diff)}`;
+  })();
+
+  // ---------- растение на подоконнике: растёт раз в день ----------
+  (function renderPlant() {
+    const key = 'liza-room-plant';
+    const todayStr = today.toISOString().slice(0, 10);
+    let stage = 0;
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || 'null');
+      if (saved && saved.lastDate === todayStr) {
+        stage = saved.stage;
+      } else {
+        stage = saved ? Math.min(saved.stage + 1, 5) : 0;
+        localStorage.setItem(key, JSON.stringify({ stage, lastDate: todayStr }));
+      }
+    } catch (e) {}
+
+    const stemHeights = [0, 8, 16, 24, 30, 34];
+    const leafCounts = [0, 1, 2, 3, 3, 4];
+    const h = stemHeights[stage], leaves = leafCounts[stage];
+    let leavesSvg = '';
+    for (let i = 0; i < leaves; i++) {
+      const y = 46 - (h / leaves) * (i + 0.6);
+      const side = i % 2 === 0 ? 1 : -1;
+      leavesSvg += `<ellipse cx="${20 + side * 7}" cy="${y}" rx="7" ry="4" fill="var(--plant-green)" transform="rotate(${side * 30} ${20 + side * 7} ${y})"/>`;
+    }
+    const flowerSvg = stage >= 5
+      ? `<circle cx="20" cy="${46 - h}" r="3" fill="var(--accent-peach)"/>
+         <circle cx="16" cy="${46 - h - 3}" r="3" fill="var(--accent-pink)"/>
+         <circle cx="24" cy="${46 - h - 3}" r="3" fill="var(--accent-pink)"/>
+         <circle cx="20" cy="${46 - h - 6}" r="3" fill="var(--accent-pink)"/>
+         <circle cx="20" cy="${46 - h - 2}" r="2" fill="#FFFDF6"/>`
+      : '';
+    document.getElementById('plant-pot').innerHTML = `
+      <svg viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 40 L30 40 L27 50 L13 50 Z" fill="var(--accent-peach)"/>
+        <ellipse cx="20" cy="40" rx="10" ry="2.4" fill="#7C6650"/>
+        ${h > 0 ? `<line x1="20" y1="40" x2="20" y2="${46 - h}" stroke="var(--plant-green)" stroke-width="2.4" stroke-linecap="round"/>` : ''}
+        ${leavesSvg}
+        ${flowerSvg}
+      </svg>`;
+  })();
+
+  // ---------- радио: генеративный эмбиент ----------
+  let audioCtx = null;
+  const radioBtn = document.getElementById('radio-btn');
+  const playlistEmbed = `<p style="margin:0 0 16px;">Собрали его специально для тебя.</p>
+    <a class="primary" href="https://music.yandex.ru/playlists/4e2ed062-24ad-8b79-9531-16dfa8da0a47" target="_blank" rel="noopener" style="width:100%; margin-bottom:16px;">открыть в Яндекс Музыке</a>
+    <p style="margin:0 0 8px; font-size:.82rem; color:var(--text-muted);">а можно и не выходя отсюда:</p>
+    <iframe title="Плейлист для Лизы" frameborder="0" allow="clipboard-write; autoplay; encrypted-media" allowfullscreen scrolling="no" style="border:none;width:100%;height:520px;border-radius:10px;" src="https://music.yandex.ru/iframe/playlist/kobaliiam/1000"></iframe>`;
+  radioBtn.addEventListener('click', () => {
+    openModal(`<h3>Твой плейлист</h3>${playlistEmbed}`, true);
+  });
+
+  // ---------- часы: настоящее время + шутка ----------
+  const now = new Date();
+  const hourDeg = (now.getHours() % 12 + now.getMinutes() / 60) * 30;
+  const minDeg = now.getMinutes() * 6;
+  document.getElementById('clock-hour').style.transform = `rotate(${hourDeg}deg)`;
+  document.getElementById('clock-minute').style.transform = `rotate(${minDeg}deg)`;
+
+  let clockToastTimer = null;
+  document.getElementById('clock-btn').addEventListener('click', () => {
+    const toast = document.getElementById('clock-toast');
+    toast.classList.add('show');
+    clearTimeout(clockToastTimer);
+    clockToastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+
+  // ---------- динозаврик: показывает язык ----------
+  let tongueTimer = null;
+  const dinoBtn = document.getElementById('dino-btn');
+  dinoBtn.addEventListener('click', () => {
+    dinoBtn.classList.add('tongue-out');
+    dinoBtn.classList.remove('bop'); void dinoBtn.offsetWidth; dinoBtn.classList.add('bop');
+    clearTimeout(tongueTimer);
+    tongueTimer = setTimeout(() => dinoBtn.classList.remove('tongue-out'), 900);
+  });
+
+  // ---------- бульдог: катит мячик, ловит лапой при возврате ----------
+  const dogBtn = document.getElementById('dog-btn');
+  const ballBtn = document.getElementById('ball-btn');
+  const ballSpin = document.getElementById('ball-spin');
+  const dogRestPos = { left: '44%', top: '69%' };
+  const ballOutPos = { left: '53%', top: '76%' };
+  let ballOut = false;
+
+  function bopDog() {
+    dogBtn.classList.remove('bop'); void dogBtn.offsetWidth; dogBtn.classList.add('bop');
+  }
+  function catchDog() {
+    dogBtn.classList.remove('catching'); void dogBtn.offsetWidth; dogBtn.classList.add('catching');
+    setTimeout(() => dogBtn.classList.remove('catching'), 650);
+    playBark();
+  }
+  function spinBall() {
+    ballSpin.classList.remove('spin'); void ballSpin.offsetWidth; ballSpin.classList.add('spin');
+    setTimeout(() => ballSpin.classList.remove('spin'), 900);
+  }
+
+  dogBtn.addEventListener('click', () => {
+    if (ballOut) return;
+    ballOut = true;
+    bopDog();
+    ballBtn.style.left = ballOutPos.left; ballBtn.style.top = ballOutPos.top;
+    ballBtn.style.transform = 'translate(-50%,-50%) scale(1)';
+    spinBall();
+  });
+
+  let ballDragging = false, ballStartX = 0, ballStartY = 0, ballOrigLeft = 0, ballOrigTop = 0;
+  ballBtn.addEventListener('pointerdown', e => {
+    if (!ballOut) return;
+    ballDragging = true;
+    ballBtn.classList.add('dragging');
+    ballBtn.setPointerCapture(e.pointerId);
+    ballStartX = e.clientX; ballStartY = e.clientY;
+    ballOrigLeft = parseFloat(ballBtn.style.left); ballOrigTop = parseFloat(ballBtn.style.top);
+  });
+  ballBtn.addEventListener('pointermove', e => {
+    if (!ballDragging) return;
+    const dx = e.clientX - ballStartX, dy = e.clientY - ballStartY;
+    const rect = room.getBoundingClientRect();
+    let newLeft = ballOrigLeft + (dx / rect.width) * 100;
+    let newTop = ballOrigTop + (dy / rect.height) * 100;
+    newLeft = Math.max(3, Math.min(97, newLeft));
+    newTop = Math.max(3, Math.min(97, newTop));
+    ballBtn.style.left = newLeft + '%'; ballBtn.style.top = newTop + '%';
+  });
+  ballBtn.addEventListener('pointerup', e => {
+    if (!ballDragging) return;
+    ballDragging = false;
+    ballBtn.classList.remove('dragging');
+    try { ballBtn.releasePointerCapture(e.pointerId); } catch (err) {}
+
+    const rect = room.getBoundingClientRect();
+    const ballLeftPx = parseFloat(ballBtn.style.left) / 100 * rect.width;
+    const ballTopPx = parseFloat(ballBtn.style.top) / 100 * rect.height;
+    const dogLeftPx = parseFloat(dogRestPos.left) / 100 * rect.width;
+    const dogTopPx = parseFloat(dogRestPos.top) / 100 * rect.height;
+    const dist = Math.hypot(ballLeftPx - dogLeftPx, ballTopPx - dogTopPx);
+
+    if (dist < 55) {
+      ballOut = false;
+      ballBtn.style.left = dogRestPos.left; ballBtn.style.top = dogRestPos.top;
+      spinBall();
+      setTimeout(() => {
+        ballBtn.style.transform = 'translate(-50%,-50%) scale(0)';
+        catchDog();
+      }, 950);
+    }
+  });
+
+  // ---------- дискошар: лучи-спицы ----------
+  const rayColors = ['var(--accent-pink)', 'var(--accent-lavender)', 'var(--accent-mint)', 'var(--accent-peach)', 'var(--accent-pink)', 'var(--accent-lavender)'];
+  const raysWrap = document.getElementById('disco-rays');
+  rayColors.forEach((color, i) => {
+    const beam = document.createElement('div');
+    beam.className = 'ray-beam';
+    beam.style.transform = `rotate(${i * 60}deg)`;
+    beam.style.background = `linear-gradient(to bottom, ${color}, transparent 70%)`;
+    raysWrap.appendChild(beam);
+  });
+
+  // ---------- окно с видами городов ----------
+  const cities = [
+    { name: 'Париж', sky: 'linear-gradient(180deg, #F6C9DC 0%, #F2AFC9 45%, #FBE3EE 75%, #F2D9C0 100%)',
+      body: { top: 10, left: 80, size: 24, color: 'radial-gradient(circle, #FFF3D6, #F7C98A)' },
+      landmark: `
+        <rect x="100" y="52" width="16" height="12" fill="#E9C79A" opacity=".8"/>
+        <rect x="120" y="46" width="14" height="18" fill="#F2D9C0" opacity=".8"/>
+        <rect x="140" y="48" width="16" height="16" fill="#E9C79A" opacity=".8"/>
+        <rect x="16" y="16" width="15" height="34" fill="#B8A88C"/>
+        <rect x="47" y="16" width="15" height="34" fill="#B8A88C"/>
+        <rect x="16" y="14" width="15" height="2.4" fill="#A6987C"/>
+        <rect x="47" y="14" width="15" height="2.4" fill="#A6987C"/>
+        <rect x="31" y="22" width="16" height="28" fill="#AC9C80"/>
+        <circle cx="39" cy="30" r="6.4" fill="#8A7A60"/>
+        <circle cx="39" cy="30" r="6.8" fill="none" stroke="#B8A88C" stroke-width="1"/>
+        <line x1="39" y1="24" x2="39" y2="36" stroke="#B8A88C" stroke-width=".5" opacity=".8"/>
+        <line x1="33" y1="30" x2="45" y2="30" stroke="#B8A88C" stroke-width=".5" opacity=".8"/>
+        <line x1="34.5" y1="25.5" x2="43.5" y2="34.5" stroke="#B8A88C" stroke-width=".5" opacity=".8"/>
+        <line x1="43.5" y1="25.5" x2="34.5" y2="34.5" stroke="#B8A88C" stroke-width=".5" opacity=".8"/>
+        <rect x="20" y="20" width="2.6" height="12" fill="#8A7A60"/>
+        <rect x="26" y="20" width="2.6" height="12" fill="#8A7A60"/>
+        <rect x="51" y="20" width="2.6" height="12" fill="#8A7A60"/>
+        <rect x="57" y="20" width="2.6" height="12" fill="#8A7A60"/>
+        <rect x="16" y="43" width="46" height="4" fill="#9C8C70"/>
+        <rect x="19" y="44" width="2" height="2" fill="#7A6A50"/><rect x="24" y="44" width="2" height="2" fill="#7A6A50"/>
+        <rect x="29" y="44" width="2" height="2" fill="#7A6A50"/><rect x="49" y="44" width="2" height="2" fill="#7A6A50"/>
+        <rect x="54" y="44" width="2" height="2" fill="#7A6A50"/><rect x="59" y="44" width="2" height="2" fill="#7A6A50"/>
+        <path d="M20,64 L20,53 Q24,48 28,53 L28,64 Z" fill="#5A4A38"/>
+        <path d="M33,64 L33,50 Q39,44 45,50 L45,64 Z" fill="#5A4A38"/>
+        <path d="M50,64 L50,53 Q54,48 58,53 L58,64 Z" fill="#5A4A38"/>
+        <line x1="39" y1="16" x2="39" y2="2" stroke="#8A7A60" stroke-width="1.4"/>` },
+    { name: 'Нью-Йорк', sky: 'linear-gradient(180deg, #6E82B8 0%, #8C9BCB 40%, #B9C3E2 70%, #E7C9A8 100%)',
+      body: { top: 14, left: 82, size: 16, color: 'radial-gradient(circle, #F3EFE0, #D8D2BE)' },
+      landmark: `
+        <rect x="98" y="38" width="12" height="26" fill="#33324A" opacity=".85"/>
+        <rect x="114" y="30" width="10" height="34" fill="#3A3954" opacity=".85"/>
+        <rect x="132" y="34" width="11" height="30" fill="#33324A" opacity=".85"/>
+        <rect x="148" y="26" width="10" height="38" fill="#3A3954" opacity=".85"/>
+        <rect x="20" y="40" width="36" height="24" fill="#2B2A3E"/>
+        <rect x="26" y="26" width="24" height="16" fill="#2B2A3E"/>
+        <rect x="31" y="16" width="14" height="12" fill="#2B2A3E"/>
+        <rect x="35" y="6" width="6" height="12" fill="#2B2A3E"/>
+        <line x1="38" y1="6" x2="38" y2="2" stroke="#2B2A3E" stroke-width="1.6"/>
+        <circle cx="38" cy="43" r="1.4" fill="#FFE29A"/><circle cx="48" cy="48" r="1.4" fill="#FFE29A"/>
+        <circle cx="30" cy="50" r="1.4" fill="#FFE29A"/><circle cx="43" cy="30" r="1.3" fill="#FFE29A"/>` },
+    { name: 'Токио', sky: 'linear-gradient(180deg, #362A56 0%, #5B3F72 40%, #8B5A8F 70%, #E89AA6 100%)', night: true,
+      body: { top: 12, left: 82, size: 20, color: 'radial-gradient(circle, #FFF7DE, #E9D48F)' },
+      landmark: `
+        <rect x="96" y="46" width="14" height="18" fill="#2E2540" opacity=".8"/>
+        <rect x="114" y="40" width="12" height="24" fill="#372B4C" opacity=".8"/>
+        <rect x="130" y="42" width="13" height="22" fill="#2E2540" opacity=".8"/>
+        <rect x="148" y="36" width="12" height="28" fill="#372B4C" opacity=".8"/>
+        <polygon points="23,64 32,28 36,28 36,8 40,8 40,28 44,28 53,64" fill="#E2703A"/>
+        <line x1="26" y1="60" x2="50" y2="34" stroke="#B85A2A" stroke-width="1" opacity=".5"/>
+        <line x1="50" y1="60" x2="26" y2="34" stroke="#B85A2A" stroke-width="1" opacity=".5"/>
+        <rect x="28" y="44" width="20" height="3" fill="#FFFDF6" opacity=".9"/>
+        <rect x="31" y="20" width="14" height="3" fill="#FFFDF6" opacity=".9"/>
+        <line x1="38" y1="8" x2="38" y2="3" stroke="#E2703A" stroke-width="1.4"/>` },
+    { name: 'Дубай', sky: 'linear-gradient(180deg, #F6C98A 0%, #F3A96B 45%, #E4774E 80%, #C85A3E 100%)',
+      body: { top: 8, left: 80, size: 30, color: 'radial-gradient(circle, #FFF3C4, #F0913F)' },
+      landmark: `
+        <rect x="96" y="48" width="13" height="16" fill="#F3E7D3" opacity=".7"/>
+        <rect x="112" y="42" width="11" height="22" fill="#F6EEDD" opacity=".7"/>
+        <rect x="132" y="46" width="12" height="18" fill="#F3E7D3" opacity=".7"/>
+        <rect x="148" y="40" width="11" height="24" fill="#F6EEDD" opacity=".7"/>
+        <rect x="26" y="44" width="24" height="20" fill="#F6EEDD"/>
+        <rect x="29" y="28" width="18" height="17" fill="#F6EEDD"/>
+        <rect x="32" y="16" width="12" height="13" fill="#F6EEDD"/>
+        <line x1="29" y1="44" x2="29" y2="28" stroke="#E0D3BC" stroke-width="1"/>
+        <line x1="47" y1="44" x2="47" y2="28" stroke="#E0D3BC" stroke-width="1"/>
+        <line x1="38" y1="16" x2="38" y2="3" stroke="#F6EEDD" stroke-width="1.6"/>` },
+    { name: 'Сидней', sky: 'linear-gradient(180deg, #A8D8E0 0%, #BFE3DD 45%, #CDEAE0 75%, #F3E3B8 100%)',
+      body: { top: 10, left: 80, size: 22, color: 'radial-gradient(circle, #FFF3E4, #F6C98A)' },
+      landmark: `
+        <rect x="8" y="48" width="6" height="16" fill="#8C99A6"/>
+        <rect x="146" y="52" width="6" height="16" fill="#8C99A6"/>
+        <path d="M8 52 Q40 8 152 56" stroke="#8C99A6" stroke-width="3" fill="none"/>
+        <line x1="8" y1="52" x2="152" y2="56" stroke="#8C99A6" stroke-width="2"/>
+        <line x1="18" y1="51" x2="18" y2="44" stroke="#8C99A6" stroke-width="1.2"/>
+        <line x1="30" y1="44" x2="30" y2="24" stroke="#8C99A6" stroke-width="1.2"/>
+        <line x1="42" y1="38" x2="42" y2="14" stroke="#8C99A6" stroke-width="1.2"/>
+        <line x1="58" y1="41" x2="58" y2="26" stroke="#8C99A6" stroke-width="1.2"/>
+        <line x1="75" y1="46" x2="75" y2="40" stroke="#8C99A6" stroke-width="1.2"/>
+        <rect x="14" y="58" width="44" height="6" fill="#F6EEDD"/>
+        <path d="M20 60 Q23 36 34 26 Q38 42 34 60 Z" fill="#FFFDF6" stroke="#D9CFAE" stroke-width=".6"/>
+        <path d="M31 60 Q35 32 47 20 Q53 40 45 60 Z" fill="#F6EEDD" stroke="#D9CFAE" stroke-width=".6"/>
+        <path d="M43 60 Q48 42 58 34 Q62 48 54 60 Z" fill="#FFFDF6" stroke="#D9CFAE" stroke-width=".6"/>` }
+  ];
+  let cityIndex = 0;
+
+  function renderCity() {
+    const c = cities[cityIndex];
+    const skyContainer = document.getElementById('window-sky');
+    skyContainer.style.background = c.sky;
+    skyContainer.querySelectorAll('.sky-body, .star').forEach(el => el.remove());
+
+    const body = document.createElement('div');
+    body.className = 'sky-body';
+    body.style.top = c.body.top + '%'; body.style.left = c.body.left + '%';
+    body.style.width = c.body.size + 'px'; body.style.height = c.body.size + 'px';
+    body.style.background = c.body.color;
+    body.style.opacity = '.9';
+    skyContainer.appendChild(body);
+
+    if (c.night) {
+      for (let i = 0; i < 14; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.top = (Math.random() * 55) + '%';
+        star.style.left = (Math.random() * 100) + '%';
+        skyContainer.appendChild(star);
+      }
+    }
+
+    const skyEl = document.getElementById('window-skyline');
+    skyEl.innerHTML = `<svg viewBox="0 0 160 64" xmlns="http://www.w3.org/2000/svg">${c.landmark}</svg>`;
+    document.getElementById('window-label').textContent = c.name;
+  }
+  document.getElementById('win-prev').addEventListener('click', () => { cityIndex = (cityIndex - 1 + cities.length) % cities.length; renderCity(); });
+  document.getElementById('win-next').addEventListener('click', () => { cityIndex = (cityIndex + 1) % cities.length; renderCity(); });
+  renderCity();
+
+  // ---------- модалка ----------
+  const overlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  const modalCard = document.getElementById('modal-card');
+  function openModal(html, wide) { modalContent.innerHTML = html; modalCard.classList.toggle('wide', !!wide); overlay.classList.add('show'); }
+  function closeModal() {
+    overlay.classList.remove('show');
+    stopStream();
+    const vid = modalContent.querySelector('video');
+    if (vid) { vid.pause(); vid.currentTime = 0; }
+    const frame = modalContent.querySelector('iframe');
+    if (frame) frame.src = frame.src;
+    modalCard.classList.remove('wide');
+  }
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ---------- поздравления: аккуратный штабель, видео вместо текста, можно двигать ----------
+  const gifts = [
+    { name: 'Алина Батталова', video: 'videos/alina.mp4', color: 'var(--accent-pink)', left: 5, top: 85, rot: -2 },
+    { name: 'Даша Демидовская', video: 'videos/dasha.mp4', color: 'var(--accent-lavender)', left: 12, top: 85, rot: 1 },
+    { name: 'Дима Кружаев', video: 'videos/dima.mp4', color: 'var(--accent-mint)', left: 19, top: 85, rot: -1 },
+    { name: 'Ира Холопова', video: 'videos/ira.mp4', color: 'var(--accent-peach)', left: 26, top: 85, rot: 2 },
+    { name: 'Катя Лягина', video: 'videos/katya.mp4', color: 'var(--accent-pink)', left: 8, top: 69, rot: 1 },
+    { name: 'Маша Фисейская', video: 'videos/masha.mp4', color: 'var(--accent-lavender)', left: 15, top: 69, rot: -1 },
+    { name: 'Моника Кобалия', video: 'videos/monika.mp4', color: 'var(--accent-mint)', left: 22, top: 69, rot: 0 },
+    { name: 'Настя Неткачева', video: 'videos/nastya.mp4', color: 'var(--accent-peach)', left: 11, top: 53, rot: 1 },
+    { name: 'Света Бушуева', video: 'videos/sveta.mp4', color: 'var(--accent-pink)', left: 19, top: 53, rot: -1 }
+  ];
+
+  const pile = document.getElementById('gift-pile');
+  let dragZ = 10;
+
+  gifts.forEach((g, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'prop gift-prop';
+    btn.style.left = g.left + '%';
+    btn.style.top = g.top + '%';
+    btn.style.setProperty('--rot', g.rot + 'deg');
+    btn.style.setProperty('--box-color', g.color);
+    btn.style.transform = `translate(-50%,-50%) rotate(${g.rot}deg)`;
+    btn.style.zIndex = i + 1;
+    btn.setAttribute('aria-label', 'Открыть видео-поздравление от ' + g.name);
+    btn.innerHTML = '<span class="box-lid"></span><span class="box-body"></span><span class="ribbon-v"></span><span class="ribbon-h"></span><span class="bow"></span>';
+
+    let dragging = false, moved = false, startX = 0, startY = 0, origLeft = g.left, origTop = g.top;
+
+    btn.addEventListener('pointerdown', e => {
+      dragging = true; moved = false;
+      btn.setPointerCapture(e.pointerId);
+      btn.classList.add('dragging');
+      startX = e.clientX; startY = e.clientY;
+      origLeft = parseFloat(btn.style.left); origTop = parseFloat(btn.style.top);
+      dragZ++; btn.style.zIndex = dragZ;
+    });
+    btn.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - startX, dy = e.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+      const rect = room.getBoundingClientRect();
+      let newLeft = origLeft + (dx / rect.width) * 100;
+      let newTop = origTop + (dy / rect.height) * 100;
+      newLeft = Math.max(3, Math.min(97, newLeft));
+      newTop = Math.max(3, Math.min(97, newTop));
+      btn.style.left = newLeft + '%'; btn.style.top = newTop + '%';
+    });
+    btn.addEventListener('pointerup', e => {
+      dragging = false; btn.classList.remove('dragging');
+      try { btn.releasePointerCapture(e.pointerId); } catch (err) {}
+      if (!moved) {
+        btn.classList.add('opened');
+        btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop');
+        openModal(`<h3>${g.name}</h3><video src="${g.video}" controls autoplay playsinline style="width:100%;border-radius:10px;background:#000;"></video>`);
+      }
+    });
+
+    pile.appendChild(btn);
+  });
+
+  // ---------- фотоаппарат ----------
+  const flashOverlay = document.getElementById('flash-overlay');
+  const captions = [
+    'с днём рождения', 'команда рядом, даже если не поместилась в кадр',
+    'главное лицо сегодняшнего дня', 'снято с любовью', 'легенда команды в кадре'
+  ];
+  let currentStream = null;
+  function stopStream() { if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; } }
+
+  async function openCamera() {
+    openModal(`<h3>Видоискатель</h3><p>Запрашиваем доступ к камере...</p>`);
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('unsupported');
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      currentStream = stream;
+      openModal(`<h3>Улыбнись</h3>
+        <video id="cam-video" autoplay playsinline muted></video>
+        <div class="modal-actions"><button class="primary" id="capture-btn">снять</button></div>`);
+      const video = document.getElementById('cam-video');
+      video.srcObject = stream;
+      document.getElementById('capture-btn').addEventListener('click', capturePhoto);
+    } catch (err) { simulatePhoto(); }
+  }
+
+  function capturePhoto() {
+    const video = document.getElementById('cam-video');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 480; canvas.height = video.videoHeight || 600;
+    const ictx = canvas.getContext('2d');
+    ictx.translate(canvas.width, 0); ictx.scale(-1, 1);
+    ictx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/png');
+    stopStream();
+    flashOverlay.classList.remove('flash'); void flashOverlay.offsetWidth; flashOverlay.classList.add('flash');
+    const caption = captions[Math.floor(Math.random() * captions.length)];
+    openModal(`<div class="polaroid" style="background-image:url('${dataUrl}');background-size:cover;background-position:center;"></div>
+      <p>${caption}</p>
+      <div class="modal-actions">
+        <button class="secondary" id="retake-btn">переснять</button>
+        <a class="primary" id="download-btn" href="${dataUrl}" download="liza-photo.png">скачать</a>
+      </div>`);
+    document.getElementById('retake-btn').addEventListener('click', openCamera);
+  }
+
+  function simulatePhoto() {
+    flashOverlay.classList.remove('flash'); void flashOverlay.offsetWidth; flashOverlay.classList.add('flash');
+    const caption = captions[Math.floor(Math.random() * captions.length)];
+    openModal(`<div class="polaroid">📸✨🎉</div><p>${caption}</p>
+      <div class="modal-actions"><button class="secondary" id="retake-btn">ещё снимок</button></div>`);
+    document.getElementById('retake-btn').addEventListener('click', openCamera);
+  }
+
+  document.getElementById('camera-btn').addEventListener('click', openCamera);
+
+  // ---------- предсказание: отдых, большие дела, путешествия ----------
+  const fortunes = [
+    'Этим летом обязательно будет город, в который давно хотелось, но всё не находилось повода',
+    'Пора наконец выключить телефон на целые выходные — и мир не рухнет',
+    'Один билет в один конец приведёт к лучшей идее года',
+    'Ты возьмёшься за то самое большое дело, которое казалось слишком масштабным ещё в январе',
+    'Где-то далеко тебя ждёт вид, ради которого стоит проснуться в пять утра',
+    'Отпуск в этом году будет длиннее, чем ты обычно себе разрешаешь',
+    'Случится путешествие, после которого захочется переставить мебель дома',
+    'Ты наконец доделаешь тот масштабный проект для себя, а не для работы',
+    'Будет утро без будильника, которое запомнится на весь год',
+    'Новая страна на карте — и совсем новый взгляд на привычные вещи'
+  ];
+  const orbBtn = document.getElementById('orb-btn');
+  function dayOfYear(d) {
+    const start = new Date(d.getFullYear(), 0, 0);
+    return Math.floor((d - start) / 86400000);
+  }
+  function askOrb() {
+    orbBtn.classList.remove('active'); void orbBtn.offsetWidth; orbBtn.classList.add('active');
+    const idx = dayOfYear(today) % fortunes.length;
+    const dateStr = today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+    setTimeout(() => {
+      openModal(`<h3>Предсказание на ${dateStr}</h3><p id="fortune-text"></p>
+        <p style="margin-top:14px; color: var(--text-muted); font-size:.85rem;">новое появится завтра</p>`);
+      typewrite(document.getElementById('fortune-text'), fortunes[idx]);
+    }, reduceMotion ? 0 : 450);
+  }
+  orbBtn.addEventListener('click', askOrb);
+
+  function typewrite(el, text) {
+    let i = 0; const speed = reduceMotion ? 0 : 22;
+    function step() { if (i <= text.length) { el.textContent = text.slice(0, i); i++; if (speed > 0) setTimeout(step, speed); else step(); } }
+    step();
+  }
+
+  // ---------- торт: обсыпка + разноцветные свечи ----------
+  const sprinkleColors = ['#F6B8D2', '#B4D8F0', '#FFE29A', '#B8E0C8', '#D9B3E8', '#F5A3A3', '#FFD37A', '#FFFDF8'];
+  const cakeTier = document.getElementById('cake-tier');
+  for (let i = 0; i < 16; i++) {
+    const s = document.createElement('span');
+    s.className = 'sprinkle';
+    const size = 2 + Math.random() * 1.8;
+    s.style.width = size + 'px'; s.style.height = size + 'px';
+    s.style.left = (6 + Math.random() * 88) + '%';
+    s.style.top = (12 + Math.random() * 76) + '%';
+    s.style.background = sprinkleColors[Math.floor(Math.random() * sprinkleColors.length)];
+    cakeTier.appendChild(s);
+  }
+
+  const candleColors = ['#F6B8D2', '#B4D8F0', '#FFE29A', '#B8E0C8', '#D9B3E8', '#F5A3A3', '#FFD37A', '#C9A8E8'];
+  const candlesWrap = document.getElementById('candles');
+  const candleCount = 5;
+  let litCount = candleCount;
+  let celebrated = false;
+  for (let i = 0; i < candleCount; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'candle';
+    btn.setAttribute('aria-pressed', 'false');
+    btn.setAttribute('aria-label', 'задуть свечу');
+    btn.innerHTML = '<span class="flame"></span><span class="smoke"></span><span class="stick" style="background:' + candleColors[i % candleColors.length] + '"></span>';
+    btn.addEventListener('click', () => extinguish(btn));
+    candlesWrap.appendChild(btn);
+  }
+  function extinguish(btn) {
+    if (btn.classList.contains('out')) return;
+    btn.classList.add('out'); btn.setAttribute('aria-pressed', 'true');
+    playPuff();
+    litCount--; if (litCount <= 0) celebrate();
+  }
+  document.getElementById('blow-all-btn').addEventListener('click', () => {
+    const remaining = candlesWrap.querySelectorAll('.candle:not(.out)');
+    remaining.forEach((c, i) => setTimeout(() => extinguish(c), i * 150));
+  });
+  function celebrate() {
+    if (celebrated) return; celebrated = true;
+    launchConfetti();
+    setTimeout(() => { openModal(`<h3>Загадала?</h3><p>Спасибо, что ты рядом. С днём рождения, Лиза — пусть этот год будет таким же смелым, как ты.</p>`); }, 500);
+  }
+
+  // ---------- конфетти ----------
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const cctx = confettiCanvas.getContext('2d');
+  let confettiPieces = []; let confettiRunning = false;
+  function sizeConfettiCanvas() { confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+  window.addEventListener('resize', sizeConfettiCanvas); sizeConfettiCanvas();
+  const confettiColors = ['#7A2B3D', '#C1DBE8', '#E8C888', '#A9C4CE'];
+  function launchConfetti() {
+    confettiPieces = Array.from({ length: reduceMotion ? 0 : 160 }, () => ({
+      x: Math.random() * confettiCanvas.width, y: -20 - Math.random() * confettiCanvas.height * 0.4,
+      w: Math.random() * 6 + 4, h: Math.random() * 10 + 6, speed: Math.random() * 2 + 1.5,
+      drift: (Math.random() - 0.5) * 1.2, rot: Math.random() * Math.PI, rotSpeed: (Math.random() - 0.5) * 0.15,
+      color: confettiColors[Math.floor(Math.random() * confettiColors.length)]
+    }));
+    confettiRunning = true; animateConfetti();
+  }
+  function animateConfetti() {
+    cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+    let anyVisible = false;
+    confettiPieces.forEach(p => {
+      p.y += p.speed; p.x += p.drift; p.rot += p.rotSpeed;
+      if (p.y < confettiCanvas.height + 20) anyVisible = true;
+      cctx.save(); cctx.translate(p.x, p.y); cctx.rotate(p.rot);
+      cctx.fillStyle = p.color; cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); cctx.restore();
+    });
+    if (anyVisible && confettiRunning) requestAnimationFrame(animateConfetti);
+    else cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+  }
+</script>
+</body>
+</html>
