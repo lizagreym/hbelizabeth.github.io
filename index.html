@@ -136,8 +136,6 @@
   .window-arrow.left { left: -30px; } .window-arrow.right { right: -30px; }
   .window-label { margin-top: 8px; text-align: center; font-family: var(--font-display); font-weight: 500; font-size: .8rem; color: var(--text-primary);
     background: var(--surface-solid); border-radius: 4px; padding: 4px 10px; box-shadow: 0 3px 6px rgba(53,48,42,.2); }
-  .season-decor { position: absolute; right: -16px; top: -16px; width: 38px; z-index: 4; filter: drop-shadow(0 3px 4px rgba(53,48,42,.3)); pointer-events: none; }
-  .season-decor svg { display: block; width: 100%; }
 
   /* ---- growing plant ---- */
   .plant-pot { position: absolute; width: 50px; }
@@ -383,7 +381,6 @@
         <div class="disco-ball" aria-hidden="true"></div>
 
         <div class="window-frame" style="left:35%; top:20%; transform:translate(-50%,-50%);">
-          <div class="season-decor" id="season-decor" aria-hidden="true"></div>
           <button class="window-arrow left" id="win-prev" aria-label="Предыдущий город">‹</button>
           <div class="window-glass">
             <div class="sky" id="window-sky"></div>
@@ -561,62 +558,6 @@
     }
   }
 
-  // ---------- сезонное украшение у окна ----------
-  const seasonDecor = {
-    winter: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" fill="none" stroke="#5C7A4A" stroke-width="6" stroke-dasharray="4.5 3.5" stroke-linecap="round"/>
-      <circle cx="13" cy="8" r="2.1" fill="#8B2A3A"/><circle cx="20" cy="5.5" r="2.1" fill="#8B2A3A"/><circle cx="27" cy="8" r="2.1" fill="#8B2A3A"/>
-      <path d="M15,32 L20,27 L25,32 L20,37 Z" fill="var(--accent-pink)"/></svg>`,
-    spring: `<svg viewBox="0 0 40 40"><path d="M20,38 Q17,20 22,4" stroke="#6B8E4E" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <circle cx="22" cy="6" r="4.2" fill="#F6B8D2"/><circle cx="15" cy="12" r="3.6" fill="#FFFDF6"/>
-      <circle cx="27" cy="14" r="3.6" fill="#F6B8D2"/><circle cx="18" cy="20" r="3.2" fill="#FFFDF6"/></svg>`,
-    summer: `<svg viewBox="0 0 40 40"><g transform="translate(20,20)">
-      <path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-peach)"/><path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-lavender)" transform="rotate(90)"/>
-      <path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-peach)" transform="rotate(180)"/><path d="M0,0 L15,-4 L15,4 Z" fill="var(--accent-lavender)" transform="rotate(270)"/>
-      <circle cx="0" cy="0" r="3" fill="var(--accent-pink)"/></g></svg>`,
-    autumn: `<svg viewBox="0 0 40 40"><path d="M20,15 Q17,9 20,4" stroke="#6B8E4E" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <ellipse cx="20" cy="25" rx="12" ry="9.5" fill="#C7702E"/>
-      <path d="M11,25 Q20,19 29,25" stroke="#A85A22" stroke-width="1" fill="none" opacity=".6"/>
-      <path d="M11,25 Q20,31 29,25" stroke="#A85A22" stroke-width="1" fill="none" opacity=".6"/></svg>`
-  };
-  document.getElementById('season-decor').innerHTML = seasonDecor[season];
-
-  // ---------- звук: генерируем на лету, без файлов ----------
-  let sfxCtx = null;
-  function getSfxCtx() {
-    if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (sfxCtx.state === 'suspended') sfxCtx.resume();
-    return sfxCtx;
-  }
-  function playBark() {
-    const ctx = getSfxCtx(); const t = ctx.currentTime;
-    for (let i = 0; i < 2; i++) {
-      const start = t + i * 0.14;
-      const osc = ctx.createOscillator(); osc.type = 'square';
-      const g = ctx.createGain();
-      osc.connect(g); g.connect(ctx.destination);
-      osc.frequency.setValueAtTime(340, start);
-      osc.frequency.exponentialRampToValueAtTime(150, start + 0.08);
-      g.gain.setValueAtTime(0.0001, start);
-      g.gain.exponentialRampToValueAtTime(0.1, start + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.0001, start + 0.12);
-      osc.start(start); osc.stop(start + 0.13);
-    }
-  }
-  function playPuff() {
-    const ctx = getSfxCtx(); const t = ctx.currentTime;
-    const len = Math.floor(ctx.sampleRate * 0.22);
-    const buffer = ctx.createBuffer(1, len, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
-    const noise = ctx.createBufferSource(); noise.buffer = buffer;
-    const filter = ctx.createBiquadFilter(); filter.type = 'bandpass'; filter.frequency.value = 1100; filter.Q.value = 0.6;
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.16, t);
-    g.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-    noise.connect(filter); filter.connect(g); g.connect(ctx.destination);
-    noise.start(t); noise.stop(t + 0.22);
-  }
-
   // ---------- обратный отсчёт до дня рождения (12 сентября) ----------
   function ruDays(n) {
     const mod10 = n % 10, mod100 = n % 100;
@@ -724,7 +665,6 @@
   function catchDog() {
     dogBtn.classList.remove('catching'); void dogBtn.offsetWidth; dogBtn.classList.add('catching');
     setTimeout(() => dogBtn.classList.remove('catching'), 650);
-    playBark();
   }
   function spinBall() {
     ballSpin.classList.remove('spin'); void ballSpin.offsetWidth; ballSpin.classList.add('spin');
@@ -1117,7 +1057,6 @@
   function extinguish(btn) {
     if (btn.classList.contains('out')) return;
     btn.classList.add('out'); btn.setAttribute('aria-pressed', 'true');
-    playPuff();
     litCount--; if (litCount <= 0) celebrate();
   }
   document.getElementById('blow-all-btn').addEventListener('click', () => {
